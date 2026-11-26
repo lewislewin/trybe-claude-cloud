@@ -16,22 +16,17 @@ Lewis's personal Claude Code config for cloud sessions on `trybeapp/trybe`: a us
 3. Start a new session with both repos selected. Run `/context` and check that
    `/root/.claude/CLAUDE.md` is listed under Memory files.
 
-## Masked production data (MCP)
+## Masked production data
 
-`setup.sh` registers the masked-data MCP server as `trybe-data` (user scope, so it loads in every
-session) when the environment provides its URL. No token is committed here. In the environment's
-settings (environment menu → Edit):
+Cloud sessions don't load MCP servers registered in `~/.claude.json`, so the investigation MCP
+server (`https://api.try.be/shop/mcp/investigations`) is called over plain HTTP by
+`bin/trybe-data`, and the `trybe-data` skill tells Claude when and how to use it.
 
-1. Add the environment variable `TRYBE_DATA_MCP_URL` with the server's MCP endpoint.
-2. Add the token, preferably as a **Network secret** for the server's host: the egress proxy adds
-   the header to each request, so the token never enters the container or a session's reach.
-   If Network secrets aren't offered, set `TRYBE_DATA_MCP_TOKEN` instead; it's sent as
-   `Authorization: Bearer <token>`, and any command in a session can read it.
-3. If the environment restricts network access, allow the server's host.
-4. Start a new session and run `/mcp` to check `trybe-data` is connected.
-
-Give the token read-only access to masked data only: anything a session reads, including
-prompt-injected text in that data, can steer what it does with the token.
+The token is a personal access token stored as a **Network secret** for `api.try.be` in the
+environment's settings: the proxy adds `Authorization: Bearer <token>`, so it never enters the
+container. If Network secrets aren't offered, set `TRYBE_DATA_MCP_TOKEN` instead. Nothing secret
+is in this repo. Revoke the token (its `oauth_access_tokens` row) once the OAuth flow works, then
+use a claude.ai custom connector instead.
 
 ## What goes where
 

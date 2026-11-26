@@ -28,4 +28,29 @@ for file in "$SRC"/agents/*.md; do
   ln -sfn "$file" "$DEST/agents/$(basename "$file")"
 done
 
+# Masked production data MCP server, registered at user scope so it loads whatever directory
+# the session starts in. Nothing secret lives in this repo:
+#   TRYBE_DATA_MCP_URL    environment variable: the server's MCP endpoint (not a secret).
+#   Token, either:
+#     - a Network secret for the server's host (preferred): the proxy adds the header to each
+#       request, so the token never enters the container and no header is configured here; or
+#     - TRYBE_DATA_MCP_TOKEN environment variable, sent as "Authorization: Bearer <token>".
+# Skipped when TRYBE_DATA_MCP_URL is unset.
+if [ -n "${TRYBE_DATA_MCP_URL:-}" ] && command -v claude >/dev/null 2>&1; then
+  config="$(python3 -c '
+import json, os
+c = {"type": "http", "url": os.environ["TRYBE_DATA_MCP_URL"]}
+t = os.environ.get("TRYBE_DATA_MCP_TOKEN")
+if t:
+    c["headers"] = {"Authorization": "Bearer " + t}
+print(json.dumps(c))
+')"
+  claude mcp remove --scope user trybe-data >/dev/null 2>&1 || true
+  if claude mcp add-json --scope user trybe-data "$config" >/dev/null; then
+    echo "trybe-claude-cloud: registered the trybe-data MCP server"
+  else
+    echo "trybe-claude-cloud: could not register the trybe-data MCP server" >&2
+  fi
+fi
+
 echo "trybe-claude-cloud: linked CLAUDE.md, $(find "$SRC/skills" -name SKILL.md | wc -l) skill(s), $(find "$SRC/agents" -name '*.md' | wc -l) agent(s)"

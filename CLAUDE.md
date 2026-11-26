@@ -10,6 +10,20 @@ The trybe repo's agent guidance lives in `AGENTS.md`, which Claude Code doesn't 
   `/home/user/trybe`; work from there.
 - This config comes from `/home/user/trybe-claude-cloud` (`lewislewin/trybe-claude-cloud`).
 
+## This environment
+
+- GitHub: the `gh` CLI isn't signed in. Use the GitHub MCP tools (load with ToolSearch); `gh` only
+  for `gh api -X GET search/...`. Wait on CI with `subscribe_pr_activity`, never a polling loop.
+- The Docker stack is started by the SessionStart hook (`~/.trybe/mode` is `docker`); it's ready
+  when `~/.trybe/session-stack.ready` exists. App `https://app.trybe.test:8888`, APIs
+  `https://api.trybe.test`. Use `curl -k --noproxy '*'` for `*.trybe.test`.
+- The containers mount `/home/user/trybe`: code must be checked out there to run, not in a worktree.
+- Only files under `/home/user/trybe` or the scratchpad open in the Claude app; send results with
+  `SendUserFile`. Nobody else can reach this session's app, so show it with screenshots.
+- The trybe skills `ci-watch`, `scope-qa`, `qa`, `run-app`, `review`, `investigate`, `handoff`,
+  `cloud-box` and `scramble-migrate` are overridden by versions in this config repo for this
+  environment. Fixes to them go in `/home/user/trybe-claude-cloud/skills/`, not trybe.
+
 ## Running PHP: always through `./bin/dev`
 
 - The host `php` is 8.3 and cannot run this repo (it needs PHP 8.5). Never call `php`,

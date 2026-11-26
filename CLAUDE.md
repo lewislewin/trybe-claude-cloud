@@ -20,6 +20,8 @@ The trybe repo's agent guidance lives in `AGENTS.md`, which Claude Code doesn't 
 - The containers mount `/home/user/trybe`: code must be checked out there to run, not in a worktree.
 - Only files under `/home/user/trybe` or the scratchpad open in the Claude app; send results with
   `SendUserFile`. Nobody else can reach this session's app, so show it with screenshots.
+- Masked, read-only production data (baskets, basket items, customers, payments):
+  `/home/user/trybe-claude-cloud/bin/trybe-data`, see the `trybe-data` skill.
 - The trybe skills `ci-watch`, `scope-qa`, `qa`, `run-app`, `review`, `investigate`, `handoff`,
   `cloud-box` and `scramble-migrate` are overridden by versions in this config repo for this
   environment. Fixes to them go in `/home/user/trybe-claude-cloud/skills/`, not trybe.

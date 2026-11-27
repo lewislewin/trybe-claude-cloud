@@ -72,7 +72,7 @@ availability or anything grouped by day, test with a non-UTC site or times near 
    `./bin/dev artisan <pkg> tinker --execute 'require "storage/<file>.php";'`. Piping a script into
    tinker's stdin fails on `use` statements.
 7. **Reproduce on `main` code, then verify with the PR.** Drive the real UI flow with a scenario run
-   through `node .agents/skills/run-app/drive.cjs <scenario.cjs> --email <user> --out .scratch/qa/pr-<n> --scale 2`.
+   through `node ~/.claude/skills/run-app/drive.cjs <scenario.cjs> --email <user> --out .scratch/qa/pr-<n> --scale 2`.
    Name the decisive frames `before-*.png` and `after-*.png`. Keep the non-GET API calls the driver
    prints that matter. PHP changes apply on the next request.
 8. **Probe edge cases through the API** with a real token (run-app section 2), or from inside a

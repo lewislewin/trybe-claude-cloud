@@ -45,15 +45,19 @@ setup script.
 ## Skill overrides
 
 Each override is a full copy of trybe's skill, with the same name, changed for a Claude Code cloud
-session running the Docker stack. Supporting files (`drive.cjs`, `push-qa-assets.sh`, the
-investigate template and generator) stay in trybe and are used from there.
+session running the Docker stack. Supporting files (`push-qa-assets.sh`, the investigate template
+and generator) stay in trybe and are used from there. The exception is `run-app/drive.cjs`: this
+repo has its own copy, at `~/.claude/skills/run-app/drive.cjs`, which adds `--video` (records a
+scenario to MP4 without the login) and `--viewport` (for example `390x844`). It finds the trybe
+checkout through `$TRYBE_ROOT`, which defaults to `/home/user/trybe`. The Quick Wins Proof
+routine (lewislewin/quick-wins) records with it.
 
 | Skill | What changes in a cloud session |
 |-------|---------------------------------|
 | `ci-watch` | GitHub MCP tools instead of `gh`; `subscribe_pr_activity` events instead of `gh pr checks --watch`; pushes to the PR's head branch |
 | `scope-qa` | Checks and files through the GitHub MCP tools; waits on PR events, not `gh --watch` |
 | `qa` | GitHub/Linear through MCP; QA in `/home/user/trybe` itself, not a worktree, because the containers mount it; stack already up; migrations and lockfile caveats; posts with the footer; screenshots sent to you |
-| `run-app` | Docker-mode stack the hook starts (wait on `session-stack.ready`); `serve token` with a pre-#2680 fallback; `--noproxy` for `*.trybe.test`; screenshots via `SendUserFile` and the QA assets branch, not commits on the PR branch |
+| `run-app` | Its own `drive.cjs` with `--video` and `--viewport`; Docker-mode stack the hook starts (wait on `session-stack.ready`); `serve token` with a pre-#2680 fallback; `--noproxy` for `*.trybe.test`; screenshots via `SendUserFile` and the QA assets branch, not commits on the PR branch |
 | `review` | Accepts a PR as the fixed point; specs from Linear/GitHub through MCP; sub-agents test with `./bin/dev`; nothing posted unless asked |
 | `investigate` | Host `python3 -I` and `npx @mermaid-js/mermaid-cli` on the preinstalled Chromium instead of two Docker images this environment lacks; report sent with `SendUserFile` |
 | `handoff` | Saved to `handoffs/` in this repo and pushed, since the container's temp dir doesn't survive; reminds you to push work in progress |

@@ -7,8 +7,8 @@ description: Run the Trybe stack and drive the staff app in a real browser — Q
 
 Personal override of trybe's `run-app` for cloud sessions whose environment runs `.agents/setup`
 (Docker mode). The upstream skill's `./bin/dev serve` is for native cloud mode and refuses to run
-here. Supporting files stay upstream: the driver is
-`/home/user/trybe/.agents/skills/run-app/drive.cjs`.
+here. The driver is this override's own copy, `~/.claude/skills/run-app/drive.cjs` (it adds
+`--video` and `--viewport` to trybe's); other supporting files stay upstream.
 
 Work from `/home/user/trybe`. The containers mount that checkout, so code you want to see running
 must be checked out there, not in a worktree.
@@ -81,7 +81,7 @@ module.exports = async (page, { shot }) => {
 ```
 
 ```bash
-node .agents/skills/run-app/drive.cjs .scratch/qa/onq.cjs --email standard@try.be --out .scratch/qa/shots
+node ~/.claude/skills/run-app/drive.cjs .scratch/qa/onq.cjs --email standard@try.be --out .scratch/qa/shots
 ```
 
 - The default URL, `https://app.trybe.test:8888`, is right here. The driver maps the host to
@@ -127,6 +127,9 @@ Selectors and quirks that cost time:
   ```
 
 - **Known noise:** auth's login page requests `/js/app.js` and gets a 404. Harmless.
+
+`--viewport 390x844` drives a phone-sized page. `--video <name>` records the scenario, without the
+login, to `<out>/<name>.mp4` (a `.webm` when ffmpeg is missing).
 
 Running Playwright yourself? `require('playwright')` works from any directory with the preinstalled
 Chromium; launch it without the `*_proxy` variables and with `ignoreHTTPSErrors: true`, as

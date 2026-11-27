@@ -128,6 +128,9 @@ Selectors and quirks that cost time:
 
 - **Known noise:** auth's login page requests `/js/app.js` and gets a 404. Harmless.
 
+`--viewport 390x844` drives a phone-sized page. `--video <name>` records the scenario, without the
+login, to `<out>/<name>.mp4` (a `.webm` when ffmpeg is missing).
+
 Running Playwright yourself? `require('playwright')` works from any directory with the preinstalled
 Chromium; launch it without the `*_proxy` variables and with `ignoreHTTPSErrors: true`, as
 `drive.cjs` does. Never run `playwright install`.
